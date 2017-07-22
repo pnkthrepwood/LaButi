@@ -436,9 +436,9 @@ void JugaPartida(InfoPartida& partida)
 		int punts = 1;
 		for (int i = 0; i < 4; ++i)
 		{
-			if (basa.guanyadora.valor >= 10)
+			if (basa.guanyadora.valor >= 9)
 			{
-				punts += basa.guanyadora.valor - 10;
+				punts += basa.guanyadora.valor - 9;
 			}
 		}
 		partida.punts[basa.va_guanyant] += punts;
