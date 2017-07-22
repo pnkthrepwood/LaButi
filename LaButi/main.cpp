@@ -372,7 +372,7 @@ Carta JugaCartaSudantDelCompany(InfoPartida& partida, int player, InfoBasa& basa
 	return jugada;
 }
 
-void JugaPartida(InfoPartida& partida)
+void JugaPartida(InfoPartida& partida, int player_que_ha_cantat)
 {
 
 	partida.punts[0] = 0;
@@ -421,7 +421,7 @@ void JugaPartida(InfoPartida& partida)
 		for (int nb = 0; nb < 4; ++nb)
 		{
 			basa.num_carta = nb;
-			int player = (i+nb) % 4;
+			int player = (i + nb + player_que_ha_cantat) % 4;
 			Carta jugada = JugaCartaSudantDelCompany(partida, player, basa);
 
 			cout << "#" << player << " Juga: ";
@@ -463,6 +463,8 @@ int main()
 	total_punts[0] = 0;
 	total_punts[1] = 0;
 
+	int player_que_ha_cantat = 0;
+
 	while (total_punts[0] < 101 && total_punts[1] < 101)
 	{
 		Baralla deck;
@@ -477,7 +479,10 @@ int main()
 		partida.players[1].equip = partida.players[3].equip = Equip::B;
 
 		Reparteix(partida.players, deck);
-		JugaPartida(partida);
+
+		player_que_ha_cantat++;
+
+		JugaPartida(partida, player_que_ha_cantat);
 
 		cout << "-- Recompte" << endl;
 		if (partida.punts[0] == partida.punts[1])
