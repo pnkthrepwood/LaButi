@@ -463,7 +463,7 @@ int main()
 	total_punts[0] = 0;
 	total_punts[1] = 0;
 
-	int player_que_ha_cantat = 0;
+	int player_que_canta = 0;
 
 	while (total_punts[0] < 101 && total_punts[1] < 101)
 	{
@@ -480,9 +480,8 @@ int main()
 
 		Reparteix(partida.players, deck);
 
-		player_que_ha_cantat++;
-
-		JugaPartida(partida, player_que_ha_cantat);
+		JugaPartida(partida, player_que_canta);
+		player_que_canta = (player_que_canta + 1) % 4;
 
 		cout << "-- Recompte" << endl;
 		if (partida.punts[0] == partida.punts[1])
