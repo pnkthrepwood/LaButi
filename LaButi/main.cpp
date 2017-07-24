@@ -68,9 +68,9 @@ void JugaPartida(InfoPartida& partida)
 		int punts = 1;
 		for (int i = 0; i < 4; ++i)
 		{
-			if (basa.guanyadora.valor >= 9)
+			if (basa.cartes[i].valor >= Valor::SOTA)
 			{
-				punts += basa.guanyadora.valor - 9;
+				punts += basa.cartes[i].valor - (int)Valor::SOTA + 1;
 			}
 		}
 		partida.punts[basa.va_guanyant-'A'] += punts;

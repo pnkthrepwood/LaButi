@@ -85,7 +85,7 @@ namespace Logger
 
 	void ResultatGuanya(Equip equip, int guany, int contrades)
 	{
-		cout << "Guanya " << equip << ": +" << guany << " [" << "x" << contrades << "]" << endl;
+		cout << "Guanya Equip " << (char)equip << ": +" << guany << " [" << "x" << contrades << "]" << endl;
 	}
 	
 	void MarcadorTotal(int punts_a, int punts_b)
