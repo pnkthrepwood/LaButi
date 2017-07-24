@@ -60,6 +60,7 @@ struct Jugador
 
 struct InfoPartida
 {
+	int player_que_canta = 0;
 	TrumfoCantat trumfo;
 	Jugador players[4];
 	int contrades = 0;

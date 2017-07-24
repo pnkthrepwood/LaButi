@@ -39,32 +39,32 @@ void EscriuDeck(Baralla& deck)
 	cout << endl;
 }
 
-void JugaPartida(InfoPartida& partida, int player_que_canta)
+void JugaPartida(InfoPartida& partida)
 {
 	partida.punts[0] = 0;
 	partida.punts[1] = 0;
 
 	// Canta trumfo
-	TrumfoCantat trumfo = partida.players[player_que_canta].IA->CantaTrumfo();
+	TrumfoCantat trumfo = partida.players[partida.player_que_canta].IA->CantaTrumfo();
 	if (trumfo == TrumfoCantat::DELEGO)
 	{
-		trumfo = partida.players[player_que_canta].IA->CantaTrumfoDelegat();
+		trumfo = partida.players[partida.player_que_canta].IA->CantaTrumfoDelegat();
 	}
 	partida.trumfo = trumfo;
 
 	// Contrades
 	partida.contrades = 1;
 	{
-		if (partida.players[(player_que_canta + 1) % 4].IA->DecidirContrar()
-			|| partida.players[(player_que_canta + 3) % 4].IA->DecidirContrar())
+		if (partida.players[(partida.player_que_canta + 1) % 4].IA->DecidirContrar()
+			|| partida.players[(partida.player_que_canta + 3) % 4].IA->DecidirContrar())
 		{
 			partida.contrades++; //Contro
-			if (partida.players[(player_que_canta + 0) % 4].IA->DecidirContrar()
-				|| partida.players[(player_que_canta + 2) % 4].IA->DecidirContrar())
+			if (partida.players[(partida.player_que_canta + 0) % 4].IA->DecidirContrar()
+				|| partida.players[(partida.player_que_canta + 2) % 4].IA->DecidirContrar())
 			{
 				partida.contrades++; //Recontro
-				if (partida.players[(player_que_canta + 1) % 4].IA->DecidirContrar()
-					|| partida.players[(player_que_canta + 3) % 4].IA->DecidirContrar())
+				if (partida.players[(partida.player_que_canta + 1) % 4].IA->DecidirContrar()
+					|| partida.players[(partida.player_que_canta + 3) % 4].IA->DecidirContrar())
 				{
 					partida.contrades++; //St. Vicenç
 				}
@@ -89,8 +89,8 @@ void JugaPartida(InfoPartida& partida, int player_que_canta)
 		for (int nb = 0; nb < 4; ++nb)
 		{
 			basa.num_carta = nb;
-			int player = (i + nb + player_que_canta) % 4;
-			Carta jugada = partida.players[player_que_canta].IA->JugaCarta(partida, player, basa);
+			int player = (i + nb + partida.player_que_canta) % 4;
+			Carta jugada = partida.players[partida.player_que_canta].IA->JugaCarta(partida, player, basa);
 
 			cout << "#" << player << " Juga: ";
 			EscriuCarta(jugada);
@@ -118,7 +118,6 @@ void JugaPartida(InfoPartida& partida, int player_que_canta)
 	cout << "A - " << partida.punts[0] << endl;
 	cout << "B - " << partida.punts[1] << endl;
 	cout << endl;
-
 }
 
 
@@ -128,8 +127,6 @@ void JugaUnaButiSencera()
 	total_punts[0] = 0;
 	total_punts[1] = 0;
 
-	int player_que_canta = 0;
-
 	InfoPartida partida;
 	partida.players[0].equip = partida.players[2].equip = Equip::A;
 	partida.players[1].equip = partida.players[3].equip = Equip::B;
@@ -137,6 +134,8 @@ void JugaUnaButiSencera()
 	{
 		partida.players[i].IA = new FunPlayer();
 	}
+
+	partida.player_que_canta = 0;
 
 	while (total_punts[0] < 101 && total_punts[1] < 101)
 	{
@@ -146,11 +145,10 @@ void JugaUnaButiSencera()
 		DeckUtils::Talla(deck);
 		EscriuDeck(deck);
 		
-
 		DeckUtils::Reparteix(partida.players, deck);
 
-		JugaPartida(partida, player_que_canta);
-		player_que_canta = (player_que_canta + 1) % 4;
+		JugaPartida(partida);
+		partida.player_que_canta = (partida.player_que_canta + 1) % 4;
 
 		cout << "-- Recompte" << endl;
 		if (partida.punts[0] == partida.punts[1])
