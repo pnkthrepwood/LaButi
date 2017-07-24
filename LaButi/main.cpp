@@ -4,40 +4,17 @@
 using namespace std;
 
 #include "VeryData.h"
+#include "Logger.h"
 #include "DeckUtils.h"
 #include "Player.h"
 
+//IAs
+//---------------------------
 #include "FunPlayer.h"
 
-void EscriuCarta(Carta carta)
-{
-	int valor = (int)(carta.valor);
-	if (valor >= Valor::SOTA && valor <= Valor::REI) valor = valor + 1;
-	else if (valor == Valor::AS) valor = 1;
-	else if (valor == Valor::MANILLA) valor = 9;
-	cout << "[" << valor << "." << (char)(carta.pal) << "] ";
-}
+//#include "StubPlayer.h"
 
-void EscriuMa(Carta* ma, int ma_size, int player)
-{
-	cout << "#" << player << ": ";
-	for (int i = 0; i < ma_size; ++i)
-	{
-		EscriuCarta(ma[i]);
-	}
-	cout << endl;
-}
-
-void EscriuDeck(Baralla& deck)
-{
-	cout << "Deck:" << endl;
-	for (int i = 0; i < 48; ++i)
-	{
-		EscriuCarta(deck[i]);
-		if ((i+1) % 12 == 0) cout << endl;
-	}
-	cout << endl;
-}
+//---------------------------
 
 void JugaPartida(InfoPartida& partida)
 {
@@ -82,7 +59,7 @@ void JugaPartida(InfoPartida& partida)
 		cout << endl;
 		for (int p = 0; p < 4; ++p)
 		{
-			EscriuMa(partida.players[p].ma, partida.players[p].ma_size, p);
+			Logger::EscriuMa(partida.players[p].ma, partida.players[p].ma_size, p);
 		}
 		cout << endl;
 
@@ -93,12 +70,12 @@ void JugaPartida(InfoPartida& partida)
 			Carta jugada = partida.players[partida.player_que_canta].IA->JugaCarta(partida, player, basa);
 
 			cout << "#" << player << " Juga: ";
-			EscriuCarta(jugada);
+			Logger::EscriuCarta(jugada);
 			cout << endl;
 		}
 		
 		cout << "Guanya: ";
-		EscriuCarta(basa.guanyadora);
+		Logger::EscriuCarta(basa.guanyadora);
 		cout << endl;
 
 		int punts = 1;
@@ -143,7 +120,7 @@ void JugaUnaButiSencera()
 
 		DeckUtils::Remena(deck);
 		DeckUtils::Talla(deck);
-		EscriuDeck(deck);
+		Logger::EscriuDeck(deck);
 		
 		DeckUtils::Reparteix(partida.players, deck);
 
@@ -180,6 +157,5 @@ void JugaUnaButiSencera()
 int main()
 {
 	DeckUtils::init();
-
 	JugaUnaButiSencera();
 }

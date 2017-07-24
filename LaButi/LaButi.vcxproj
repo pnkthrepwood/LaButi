@@ -69,6 +69,7 @@
   <ItemGroup>
     <ClInclude Include="DeckUtils.h" />
     <ClInclude Include="FunPlayer.h" />
+    <ClInclude Include="Logger.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="VeryData.h" />
