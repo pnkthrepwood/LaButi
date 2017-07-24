@@ -35,7 +35,8 @@ typedef Carta Baralla[12 * 4];
 
 enum Equip
 {
-	A, B
+	A = 'A', 
+	B = 'B'
 };
 
 enum class TrumfoCantat

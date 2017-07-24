@@ -1,5 +1,3 @@
-#include <iostream>
-#include <ctime>
 #include <vector>
 using namespace std;
 
@@ -53,15 +51,8 @@ void JugaPartida(InfoPartida& partida)
 	for (int i = 0; i < 12; ++i)
 	{
 		InfoBasa basa;
-		cout << "-- Basa " << i+1 << endl;
-		cout << endl << "Trumfo: " << (char)partida.trumfo << endl;
 
-		cout << endl;
-		for (int p = 0; p < 4; ++p)
-		{
-			Logger::EscriuMa(partida.players[p].ma, partida.players[p].ma_size, p);
-		}
-		cout << endl;
+		Logger::ComencaBasa(i, partida);
 
 		for (int nb = 0; nb < 4; ++nb)
 		{
@@ -69,14 +60,10 @@ void JugaPartida(InfoPartida& partida)
 			int player = (i + nb + partida.player_que_canta) % 4;
 			Carta jugada = partida.players[partida.player_que_canta].IA->JugaCarta(partida, player, basa);
 
-			cout << "#" << player << " Juga: ";
-			Logger::EscriuCarta(jugada);
-			cout << endl;
+			Logger::EscriuJugada(player, jugada);
 		}
 		
-		cout << "Guanya: ";
-		Logger::EscriuCarta(basa.guanyadora);
-		cout << endl;
+		Logger::EscriuWinningCard(basa.guanyadora);
 
 		int punts = 1;
 		for (int i = 0; i < 4; ++i)
@@ -86,15 +73,12 @@ void JugaPartida(InfoPartida& partida)
 				punts += basa.guanyadora.valor - 9;
 			}
 		}
-		partida.punts[basa.va_guanyant] += punts;
+		partida.punts[basa.va_guanyant-'A'] += punts;
 
-		cout << endl;
 	}
 
-	cout << "Punts de partida:" << endl;
-	cout << "A - " << partida.punts[0] << endl;
-	cout << "B - " << partida.punts[1] << endl;
-	cout << endl;
+	Logger::PuntsDePartida(partida);
+	
 }
 
 
@@ -127,30 +111,25 @@ void JugaUnaButiSencera()
 		JugaPartida(partida);
 		partida.player_que_canta = (partida.player_que_canta + 1) % 4;
 
-		cout << "-- Recompte" << endl;
 		if (partida.punts[0] == partida.punts[1])
 		{
-			cout << "Putes!" << endl;
+			Logger::ResultatPutes();
 		}
 		else if (partida.punts[0] > partida.punts[1])
 		{
 			int guany = (partida.punts[0] - 36)*partida.contrades;
-			cout << "Guanya A: +" << guany << " [" << "x" << partida.contrades << "]" << endl;
 			total_punts[0] += guany;
+			Logger::ResultatGuanya(Equip::A, guany, partida.contrades);
 		}
 		else
 		{
 			int guany = (partida.punts[1] - 36)*partida.contrades;
-			cout << "Guanya B: +" << guany << " [" << "x" << partida.contrades << "]" << endl;
 			total_punts[1] += guany;
+			Logger::ResultatGuanya(Equip::B, guany, partida.contrades);
 		}
 
-		cout << endl;
-
-		cout << "Total:" << endl;
-		cout << "A - " << total_punts[0] << endl;
-		cout << "B - " << total_punts[1] << endl;
-		cout << endl;
+		Logger::MarcadorTotal(total_punts[0], total_punts[1]);
+		
 	}
 }
 
