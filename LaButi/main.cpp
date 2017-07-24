@@ -58,7 +58,69 @@ void JugaPartida(InfoPartida& partida)
 		{
 			basa.num_carta = nb;
 			int player = (i + nb + partida.player_que_canta) % 4;
-			Carta jugada = partida.players[partida.player_que_canta].IA->JugaCarta(partida, player, basa);
+
+			Carta* ma = partida.players[player].ma;
+			int ma_size = partida.players[player].ma_size;
+			Carta jugada = partida.players[partida.player_que_canta].IA->JugaCarta(ma, ma_size, player, basa);
+
+			//TODO: Check Carta jugada es legal
+
+			for (int i = 0; i < ma_size; ++i)
+			{ 
+				if (ma[i].pal == jugada.pal && ma[i].valor == ma[i].valor)
+				{
+					ma[i].pal = ma[ma_size - 1].pal;
+					ma[i].valor = ma[ma_size - 1].valor;
+					ma_size--;
+					break;
+				}
+			}
+
+			basa.cartes[basa.num_carta].pal = jugada.pal;
+			basa.cartes[basa.num_carta].valor = jugada.valor;
+
+			// Update la mes guanyadora
+			if (basa.num_carta == 0)
+			{
+				basa.guanyadora.pal = basa.cartes[basa.num_carta].pal;
+				basa.guanyadora.valor = basa.cartes[basa.num_carta].valor;
+				basa.va_guanyant = partida.players[player].equip;
+			}
+			else if (basa.guanyadora.pal == basa.cartes[basa.num_carta].pal
+				&&	basa.guanyadora.valor < basa.cartes[basa.num_carta].valor)
+			{
+				basa.guanyadora.valor = basa.cartes[basa.num_carta].valor;
+
+				if (basa.va_guanyant != partida.players[player].equip)
+				{
+					basa.va_guanyant = partida.players[player].equip;
+				}
+
+			}
+			else if (partida.trumfo != (TrumfoCantat::BUTI)
+				&& basa.guanyadora.pal == (Pal)partida.trumfo
+				&& basa.cartes[basa.num_carta].pal == (Pal)partida.trumfo
+				&& basa.guanyadora.valor < basa.cartes[basa.num_carta].valor)
+			{
+				basa.guanyadora.valor = basa.cartes[basa.num_carta].valor;
+
+				if (basa.va_guanyant != partida.players[player].equip)
+				{
+					basa.va_guanyant = partida.players[player].equip;
+				}
+			}
+			else if (partida.trumfo != (TrumfoCantat::BUTI)
+				&& basa.guanyadora.pal != (Pal)partida.trumfo
+				&& basa.cartes[basa.num_carta].pal == (Pal)partida.trumfo)
+			{
+				basa.guanyadora.pal = basa.cartes[basa.num_carta].pal;
+				basa.guanyadora.valor = basa.cartes[basa.num_carta].valor;
+
+				if (basa.va_guanyant != partida.players[player].equip)
+				{
+					basa.va_guanyant = partida.players[player].equip;
+				}
+			}
 
 			Logger::EscriuJugada(player, jugada);
 		}
@@ -136,5 +198,6 @@ void JugaUnaButiSencera()
 int main()
 {
 	DeckUtils::init();
+
 	JugaUnaButiSencera();
 }

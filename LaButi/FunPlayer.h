@@ -8,17 +8,17 @@ struct FunPlayer : IAPlayer
 
 	bool DecidirContrar()
 	{
-		return false;
+		return Random::Roll(0, 100) < 10;
 	}
 
 	bool DecidirRecontrar()
 	{
-		return false;
+		return Random::Roll(0, 100) < 5;
 	}
 
 	bool DecidirStVicenc()
 	{
-		return false;
+		return Random::Roll(0, 100) < 1;
 	}
 
 	TrumfoCantat CantaTrumfo()
@@ -39,11 +39,8 @@ struct FunPlayer : IAPlayer
 		return r;
 	}
 
-	Carta JugaCarta(InfoPartida& partida, int player, InfoBasa& basa)
+	Carta JugaCarta(Carta* ma, int ma_size, int player, InfoBasa& basa)
 	{
-		Carta* ma = partida.players[player].ma;
-		int& ma_size = partida.players[player].ma_size;
-
 		// Es poden jugar totes de moment
 		bool jugables[12];
 		for (int i = 0; i < 12; ++i)
@@ -73,7 +70,7 @@ struct FunPlayer : IAPlayer
 			for (int i = 0; i < ma_size; ++i)
 			{
 				if (jugables[i]
-					&& basa.guanyadora.pal == pal_basa
+					&&  basa.guanyadora.pal == pal_basa
 					&&	ma[i].pal == pal_basa
 					&&	ma[i].valor > basa.guanyadora.valor)
 				{
@@ -81,18 +78,18 @@ struct FunPlayer : IAPlayer
 					break;
 				}
 				if (jugables[i]
-					&& partida.trumfo != (TrumfoCantat::BUTI)
-					&& basa.guanyadora.pal == (Pal)partida.trumfo
-					&& ma[i].pal == (Pal)partida.trumfo
+					&& basa.trumfo != (TrumfoCantat::BUTI)
+					&& basa.guanyadora.pal == (Pal)basa.trumfo
+					&& ma[i].pal == (Pal)basa.trumfo
 					&& ma[i].valor > basa.guanyadora.valor)
 				{
 					puc_guanyar = true;
 					break;
 				}
 				if (jugables[i]
-					&& partida.trumfo != (TrumfoCantat::BUTI)
-					&& basa.guanyadora.pal != (Pal)partida.trumfo
-					&& ma[i].pal == (Pal)partida.trumfo)
+					&& basa.trumfo != (TrumfoCantat::BUTI)
+					&& basa.guanyadora.pal != (Pal)basa.trumfo
+					&& ma[i].pal == (Pal)basa.trumfo)
 				{
 					puc_guanyar = true;
 					break;
@@ -111,17 +108,17 @@ struct FunPlayer : IAPlayer
 						continue;
 					}
 					else if (jugables[i]
-						&& partida.trumfo != (TrumfoCantat::BUTI)
-						&& basa.guanyadora.pal == (Pal)partida.trumfo
-						&& ma[i].pal == (Pal)partida.trumfo
+						&& basa.trumfo != (TrumfoCantat::BUTI)
+						&& basa.guanyadora.pal == (Pal)basa.trumfo
+						&& ma[i].pal == (Pal)basa.trumfo
 						&& ma[i].valor > basa.guanyadora.valor)
 					{
 						continue;
 					}
 					else if (jugables[i]
-						&& partida.trumfo != (TrumfoCantat::BUTI)
-						&& basa.guanyadora.pal != (Pal)partida.trumfo
-						&& ma[i].pal == (Pal)partida.trumfo)
+						&& basa.trumfo != (TrumfoCantat::BUTI)
+						&& basa.guanyadora.pal != (Pal)basa.trumfo
+						&& ma[i].pal == (Pal)basa.trumfo)
 					{
 						continue;
 					}
@@ -140,62 +137,9 @@ struct FunPlayer : IAPlayer
 			r = Random::Roll(0, ma_size-1);
 		}
 
-		basa.cartes[basa.num_carta].pal = ma[r].pal;
-		basa.cartes[basa.num_carta].valor = ma[r].valor;
-
-		{ // Treu la jugada
-			ma[r].pal = ma[ma_size - 1].pal;
-			ma[r].valor = ma[ma_size - 1].valor;
-			ma_size--;
-		}
-
 		Carta jugada;
-		jugada.pal = basa.cartes[basa.num_carta].pal;
-		jugada.valor = basa.cartes[basa.num_carta].valor;
-
-
-		// Update la mes guanyadora
-		if (basa.num_carta == 0)
-		{
-			basa.guanyadora.pal = basa.cartes[basa.num_carta].pal;
-			basa.guanyadora.valor = basa.cartes[basa.num_carta].valor;
-			basa.va_guanyant = partida.players[player].equip;
-		}
-		else if (basa.guanyadora.pal == basa.cartes[basa.num_carta].pal
-			&&	basa.guanyadora.valor < basa.cartes[basa.num_carta].valor)
-		{
-			basa.guanyadora.valor = basa.cartes[basa.num_carta].valor;
-
-			if (basa.va_guanyant != partida.players[player].equip)
-			{
-				basa.va_guanyant = partida.players[player].equip;
-			}
-
-		}
-		else if (partida.trumfo != (TrumfoCantat::BUTI)
-			&& basa.guanyadora.pal == (Pal)partida.trumfo
-			&& basa.cartes[basa.num_carta].pal == (Pal)partida.trumfo
-			&& basa.guanyadora.valor < basa.cartes[basa.num_carta].valor)
-		{
-			basa.guanyadora.valor = basa.cartes[basa.num_carta].valor;
-
-			if (basa.va_guanyant != partida.players[player].equip)
-			{
-				basa.va_guanyant = partida.players[player].equip;
-			}
-		}
-		else if (partida.trumfo != (TrumfoCantat::BUTI)
-			&& basa.guanyadora.pal != (Pal)partida.trumfo
-			&& basa.cartes[basa.num_carta].pal == (Pal)partida.trumfo)
-		{
-			basa.guanyadora.pal = basa.cartes[basa.num_carta].pal;
-			basa.guanyadora.valor = basa.cartes[basa.num_carta].valor;
-
-			if (basa.va_guanyant != partida.players[player].equip)
-			{
-				basa.va_guanyant = partida.players[player].equip;
-			}
-		}
+		jugada.pal = ma[r].pal;
+		jugada.valor = ma[r].valor;
 
 		return jugada;
 	}

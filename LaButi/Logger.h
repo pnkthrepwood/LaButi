@@ -6,8 +6,6 @@ using namespace std;
 
 namespace Logger
 {
-
-
 	void EscriuCarta(Carta carta)
 	{
 		int valor = (int)(carta.valor);

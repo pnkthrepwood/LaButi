@@ -74,6 +74,7 @@ struct InfoBasa
 	Carta guanyadora;
 	Equip va_guanyant;
 	int num_carta;
+	TrumfoCantat trumfo;
 };
 
 //Deck magic platonic
